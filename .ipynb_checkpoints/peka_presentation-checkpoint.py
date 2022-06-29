@@ -3,7 +3,7 @@ st.set_page_config(layout="wide")
 import pandas as pd
 import numpy as np
 from datetime import date,timedelta
-# import plotly.express as px
+import plotly.express as px
 
 col1, col2 = st.columns(2)
 with col1:
@@ -52,22 +52,22 @@ if uploaded_file is not None:
     # First Slide
     if slide_types == "Overall Summary":
         st.subheader("Distribution of Claim IDs that escalated to MAS based on provider type. (n={})".format(len(df)))
-        # st.plotly_chart(px.pie(df.drop_duplicates(subset = "provider_id")\
-        #                          .pivot_table(index = "provider_type",
-        #                                       values = "provider_id",
-        #                                       aggfunc = len,
-        #                                       margins = False)\
-        #                          .rename_axis(None, axis = 1).reset_index().rename(columns = {"provider_id":"Total"}), 
-        #                        height = 700,
-        #                        values = "Total", 
-        #                        names = "provider_type")\
-        #                   .update_traces(textposition = 'auto', 
-        #                                  insidetextorientation = "horizontal",
-        #                                  textinfo = 'percent+label+value', 
-        #                                  textfont_size = 30, 
-        #                                  sort = False, 
-        #                                  rotation = 45)\
-        #                   .update(layout_showlegend = False))
+        st.plotly_chart(px.pie(df.drop_duplicates(subset = "provider_id")\
+                                 .pivot_table(index = "provider_type",
+                                              values = "provider_id",
+                                              aggfunc = len,
+                                              margins = False)\
+                                 .rename_axis(None, axis = 1).reset_index().rename(columns = {"provider_id":"Total"}), 
+                               height = 700,
+                               values = "Total", 
+                               names = "provider_type")\
+                          .update_traces(textposition = 'auto', 
+                                         insidetextorientation = "horizontal",
+                                         textinfo = 'percent+label+value', 
+                                         textfont_size = 30, 
+                                         sort = False, 
+                                         rotation = 45)\
+                          .update(layout_showlegend = False))
         
         st.subheader("Distribution of Claim IDs that escalated to MAS based on MAS Recommendation. (n={})".format(len(df)))
         st.table(df.pivot_table(index = "recommendation",
