@@ -1,5 +1,5 @@
 import streamlit as st
-st.set_page_config(layout="wide")
+st.set_page_config(page_title = "Medical Audit Presentation", layout="wide")
 import pandas as pd
 import numpy as np
 from datetime import date,timedelta
