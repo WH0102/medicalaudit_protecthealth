@@ -7,8 +7,10 @@ import plotly.express as px
 
 col1, col2 = st.columns(2)
 with col1:
+    st.progress(100)
     st.title("TCMC Presentation by MAS ")
     st.subheader("on {}".format(date.today().strftime("%d-%m-%Y")))
+    st.progress(100)
 with col2:
     uploaded_file = st.file_uploader("Please upload post analysis file only.")
 
@@ -38,7 +40,7 @@ if uploaded_file is not None:
     
     # Function for presentation
     def presentation(left_upper, right_upper, table, recommendation):
-        st.write("================================================================================================================================================================================")
+        st.progress(100)
         col1, col2 = st.columns(2)
         with col1:
             st.container().header(left_upper)
@@ -47,7 +49,7 @@ if uploaded_file is not None:
         st.table(table)
         st.subheader("MAS Recommendation =")
         st.code(recommendation)
-        st.write("================================================================================================================================================================================")
+        st.progress(100)
         
     # First Slide
     if slide_types == "Overall Summary":
