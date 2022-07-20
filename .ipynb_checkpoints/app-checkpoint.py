@@ -1,9 +1,10 @@
 import streamlit as st
-st.set_page_config(page_title = "Medical Audit Presentation", layout="wide")
+st.set_page_config(page_title = "Medical Audit Presentation", layout = "wide")
 import pandas as pd
 import numpy as np
 from datetime import date,timedelta
 import plotly.express as px
+px.set_mapbox_access_token("pk.eyJ1IjoibWFuZnllIiwiYSI6ImNrN2hvc3h1ejBjcWszZ25raXk0Z3VqaTkifQ.5PHi84GwoNUG5v-GMHZP1w")
 
 col1, col2 = st.columns(2)
 with col1:
@@ -145,10 +146,12 @@ if uploaded_file is not None:
     elif slide_types == "k_issue":
         num = 1
         for provider in df.loc[df.loc[:,"slide_type"] == "k_issue", "provider_id"].sort_values().unique():
-            presentation("{}. Provider ID = {}, {}, from {}, (n = {})".format(num, provider, 
-                                                                              df.loc[df.loc[:,"provider_id"] == provider, "provider_name"].min(),
-                                                                              df.loc[df.loc[:,"provider_id"] == provider, "lab_state"].reset_index().loc[0,"lab_state"],
-                                                                              len(df.loc[((df.loc[:,"slide_type"] == "k_issue") & (df.loc[:,"provider_id"] == provider))])),
+            presentation("{}. Provider ID = {}, {}, from {}, (n = {}) \n Distance Between Provider And Lab = {}km"\
+                             .format(num, provider, 
+                                     df.loc[df.loc[:,"provider_id"] == provider, "provider_name"].min(),
+                                     df.loc[df.loc[:,"provider_id"] == provider, "lab_state"].reset_index().loc[0,"lab_state"],
+                                     len(df.loc[((df.loc[:,"slide_type"] == "k_issue") & (df.loc[:,"provider_id"] == provider))]),
+                                     df.loc[df.loc[:,"provider_id"] == provider, "distance"].min()),
                          "- Complete PDPA/ Incomplete PDPA (No Date Only) \n" +
                          "- 3/3 Sections Done \n" +
                          "- Complete Result Uploaded \n" +
@@ -157,6 +160,22 @@ if uploaded_file is not None:
                                  (df.loc[:,"provider_id"] == provider))].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
                            .loc[:,("claim_id", "provider_id", "provider_name", "hs1_created_date", "payment_hs2", "payment_lab", "ix_justification")],
                          df.loc[df.loc[:,"slide_type"] == "k_issue", "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
+            provider_geo = df.loc[((df.loc[:,"slide_type"] == slide_types) & 
+                                   (df.loc[:,"provider_id"] == provider)), 
+                                   ("provider_id", "provider_name", "provider_type", "provider_lat", "provider_lng")].drop_duplicates(subset = "provider_id")
+            lab_geo = df.loc[((df.loc[:,"slide_type"] == slide_types) & 
+                              (df.loc[:,"provider_id"] == provider)),
+                              ("lab_id", "lab_name", "provider_type", "lab_lat", "lab_lng")].drop_duplicates(subset = "lab_id")\
+                        .rename(columns = {"lab_id": "provider_id",
+                                           "lab_name": "provider_name",
+                                            "lab_lat": "provider_lat",
+                                            "lab_lng": "provider_lng"})
+            lab_geo.loc[:,"provider_type"] = "Lab"
+            geo_temp = pd.concat([provider_geo, lab_geo], ignore_index = True)
+            geo_temp.loc[:,"size"] = 10
+                             
+            # st.write(geo_temp)
+            st.plotly_chart(px.scatter_mapbox(geo_temp, lat = "provider_lat", lon = "provider_lng", color = "provider_type", size = "size"), use_container_width=True)
             num += 1
             
     # For HS2 Issues
