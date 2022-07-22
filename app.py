@@ -80,7 +80,7 @@ if uploaded_file is not None:
                                  .rename_axis(None, axis = 1).reset_index().rename(columns = {"provider_id":"Total"}), 
                                height = 700,
                                values = "Total", 
-                               names = "provider_type")\
+                               names = "ix_complete")\
                           .update_traces(textposition = 'auto', 
                                          insidetextorientation = "horizontal",
                                          textinfo = 'percent+label+value', 
