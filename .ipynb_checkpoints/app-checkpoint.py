@@ -159,7 +159,8 @@ if uploaded_file is not None:
                          df.loc[((df.loc[:,"slide_type"] == "k_issue") & 
                                  (df.loc[:,"provider_id"] == provider))].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
                            .loc[:,("claim_id", "provider_id", "provider_name", "hs1_created_date", "payment_hs2", "payment_lab", "ix_justification")],
-                         df.loc[df.loc[:,"slide_type"] == "k_issue", "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
+                         df.loc[((df.loc[:,"slide_type"] == "k_issue") & 
+                                 (df.loc[:,"provider_id"] == provider)), "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
             provider_geo = df.loc[((df.loc[:,"slide_type"] == slide_types) & 
                                    (df.loc[:,"provider_id"] == provider)), 
                                    ("provider_id", "provider_name", "provider_type", "provider_lat", "provider_lng")].drop_duplicates(subset = "provider_id")
