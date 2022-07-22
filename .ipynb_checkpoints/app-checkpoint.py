@@ -72,6 +72,23 @@ if uploaded_file is not None:
                                          rotation = 45)\
                           .update(layout_showlegend = False), use_container_width=True)
         
+        st.subheader("Distribution of Claim IDs that escalated to MAS based on Completeness of Investigation Reports. (n={})".format(len(df)))
+        st.plotly_chart(px.pie(df.pivot_table(index = "ix_complete",
+                                              values = "provider_id",
+                                              aggfunc = len,
+                                              margins = False)\
+                                 .rename_axis(None, axis = 1).reset_index().rename(columns = {"provider_id":"Total"}), 
+                               height = 700,
+                               values = "Total", 
+                               names = "provider_type")\
+                          .update_traces(textposition = 'auto', 
+                                         insidetextorientation = "horizontal",
+                                         textinfo = 'percent+label+value', 
+                                         textfont_size = 30, 
+                                         sort = False, 
+                                         rotation = 45)\
+                          .update(layout_showlegend = False), use_container_width=True)
+        
         st.subheader("Distribution of Claim IDs that escalated to MAS based on MAS Recommendation. (n={})".format(len(df)))
         st.table(df.pivot_table(index = "recommendation",
                                 values = "claim_id",
