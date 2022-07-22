@@ -222,7 +222,7 @@ if uploaded_file is not None:
                          df.loc[((df.loc[:,"slide_type"] == "hs2_issue") & 
                                  (df.loc[:,"ix_complete"] == "Complete") & 
                                  (df.loc[:,"recommendation"] == recommendation))].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
-                           .loc[:,("claim_id", "provider_id", "provider_name", "hs2_created_date", "payment_hs1", "payment_lab", "hs2_justification", "normal_diag")],
+                           .loc[:,("claim_id", "provider_id", "provider_name", "hs2_created_date", "consultation_type", "payment_hs1", "payment_lab", "hs2_justification", "normal_diag")],
                         df.loc[((df.loc[:,"slide_type"] == "hs2_issue") & 
                                 (df.loc[:,"ix_complete"] == "Complete") & 
                                 (df.loc[:,"recommendation"] == recommendation)), "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
