@@ -73,14 +73,17 @@ if uploaded_file is not None:
                           .update(layout_showlegend = False), use_container_width=True)
         
         st.subheader("Distribution of Claim IDs that escalated to MAS based on Completeness of Investigation Reports. (n={})".format(len(df)))
-        st.plotly_chart(px.pie(df.pivot_table(index = "ix_complete",
+        df.loc[:,"ix_complete3"] = "Incomplete Investigation Results"
+        df.loc[df.loc[:,"ix_complete"] == "Complete", "ix_complete3"] = "Complete Investigation Results"
+        df.loc[df.loc[:,"ix_complete"] == "No Result", "ix_complete3"] = "No Investigation Result Uploaded"
+        st.plotly_chart(px.pie(df.pivot_table(index = "ix_complete3",
                                               values = "provider_id",
                                               aggfunc = len,
                                               margins = False)\
                                  .rename_axis(None, axis = 1).reset_index().rename(columns = {"provider_id":"Total"}), 
                                height = 700,
                                values = "Total", 
-                               names = "ix_complete")\
+                               names = "ix_complete3")\
                           .update_traces(textposition = 'auto', 
                                          insidetextorientation = "horizontal",
                                          textinfo = 'percent+label+value', 
