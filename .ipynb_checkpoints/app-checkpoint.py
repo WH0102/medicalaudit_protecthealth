@@ -417,9 +417,9 @@ if uploaded_file is not None:
                      "- {} \n".format(tuple(df.loc[df.loc[:,"slide_type"] == "incomplete_section", "pdpa_acceptance"].unique().transpose())) + 
                      "- 0 Sections Done \n" +
                      "- {} \n".format(tuple(df.loc[df.loc[:,"slide_type"] == "incomplete_section", "ix_complete"].unique().transpose())),
-                     df.loc[df.loc[:,"slide_type"] == "no_section_k"].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
+                     df.loc[df.loc[:,"slide_type"] == "incomplete_section"].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
                        .loc[:,("claim_id", "provider_id", "provider_name", "hs1_created_date", "pdpa_1")],
-                     df.loc[df.loc[:,"slide_type"] == "no_section_k", "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
+                     df.loc[df.loc[:,"slide_type"] == "incomplete_section", "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
         
     # For Incomplete Result Issue
     elif slide_types == "incomplete_result":
