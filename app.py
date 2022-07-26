@@ -32,10 +32,11 @@ if uploaded_file is not None:
                                                                                "pdpa_issue":3,
                                                                                "diagnosis_issue":4,
                                                                                "ufeme_issue":5,
-                                                                               "no_section_k":6,
-                                                                               "incomplete_section":7,
-                                                                               "incomplete_result":8,
-                                                                               "delete":9}))\
+                                                                               "Med_Hx":6,
+                                                                               "no_section_k":7,
+                                                                               "incomplete_section":8,
+                                                                               "incomplete_result":9,
+                                                                               "delete":10}))\
                                            .loc[:,"slide_type"].unique().transpose()) + 
                                    ("Provider Watchlist", "Financial Summary"))
     
@@ -118,10 +119,12 @@ if uploaded_file is not None:
         st.subheader("Update on Provider Watchlist:")
         # The main table
         pw = pd.read_excel(uploaded_file, header = 0, sheet_name = "provider_watchlist")
-        pw.loc[:,("issue_claims", "pdpa", "section", "ix", "k_lysed", "no_ufeme", "dx", "hs2_issue")] = pw.loc[:,("issue_claims", "pdpa", "section", "ix", "k_lysed", "no_ufeme", "dx", "hs2_issue")]\
-                                                                                                          .fillna(0)\
-                                                                                                          .apply(lambda x: pd.to_numeric(x, downcast = "integer"), 
-                                                                                                                 axis = 1)
+        pw.loc[:,("issue_claims", "pdpa", "section", 
+                  "ix", "k_lysed", "no_ufeme", "dx", "hs2_issue")] = pw.loc[:,("issue_claims", "pdpa", "section", 
+                                                                               "ix", "k_lysed", "no_ufeme", "dx", "hs2_issue")]\
+                                                                       .fillna(0)\
+                                                                       .apply(lambda x: pd.to_numeric(x, downcast = "integer"), 
+                                                                                                         axis = 1)
         pw.loc[:,"min_date"] = pd.to_datetime(pw.loc[:,"min_date"]).dt.strftime("%d/%m/%y")
         pw.loc[:,"max_date"] = pd.to_datetime(pw.loc[:,"max_date"]).dt.strftime("%d/%m/%y")
         pw = pw.fillna("None")
@@ -391,7 +394,48 @@ if uploaded_file is not None:
                          df.loc[((df.loc[:,"slide_type"] == "ufeme_issue") & 
                                 (df.loc[:,"recommendation"] == recommendation)), "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
             num += 1
-            
+    
+    # For Med_Hx issue
+    elif slide_types == "Med_Hx":
+        num = 1
+        for recommendation in df.loc[((df.loc[:,"slide_type"] == "Med_Hx") & 
+                                      (df.loc[:,"ix_complete"] == "Complete")), "recommendation"].unique():
+            presentation("{}. {} (n = {})".format(num, recommendation,
+                                                  len(df.loc[((df.loc[:,"slide_type"] == "Med_Hx") & 
+                                                              (df.loc[:,"ix_complete"] == "Complete") &
+                                                              (df.loc[:,"recommendation"] == recommendation))])),
+                         "- Complete PDPA/ Incomplete PDPA (No Date Only) \n" +
+                         "- 3/3 Sections Done \n" +
+                         "- No UFEME Only \n" +
+                         "- Selected All for Past Medical History",
+                         df.loc[(df.loc[:,"slide_type"] == "Med_Hx") & 
+                                (df.loc[:,"ix_complete"] == "Complete") &
+                                (df.loc[:,"recommendation"] == recommendation)].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
+                           .loc[:,("claim_id", "provider_id", "provider_name", "hs1_created_date", "payment_hs2")],
+                         df.loc[((df.loc[:,"slide_type"] == "Med_Hx") & 
+                                 (df.loc[:,"ix_complete"] == "Complete") &
+                                 (df.loc[:,"recommendation"] == recommendation)), "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
+            num += 1
+        if len(df.loc[((df.loc[:,"slide_type"] == "Med_Hx") & 
+                       (df.loc[:,"ix_complete"] == "No UFEME"))]) >= 1:
+            for recommendation in df.loc[((df.loc[:,"slide_type"] == "Med_Hx") & 
+                                          (df.loc[:,"ix_complete"] == "No UFEME")), "recommendation"].unique():
+                presentation("{}. {} (n = {})".format(num, recommendation,
+                                                      len(df.loc[((df.loc[:,"slide_type"] == "Med_Hx") & 
+                                                                  (df.loc[:,"ix_complete"] == "No UFEME") &
+                                                                  (df.loc[:,"recommendation"] == recommendation))])),
+                             "- Complete PDPA/ Incomplete PDPA (No Date Only) \n" +
+                             "- 3/3 Sections Done \n" +
+                             "- No UFEME Only \n" +
+                             "- Selected All for Past Medical History",
+                             df.loc[(df.loc[:,"slide_type"] == "Med_Hx") & 
+                                    (df.loc[:,"ix_complete"] == "No UFEME") &
+                                    (df.loc[:,"recommendation"] == recommendation)].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
+                               .loc[:,("claim_id", "provider_id", "provider_name", "hs1_created_date", "payment_hs2", "ix_justification")],
+                             df.loc[((df.loc[:,"slide_type"] == "Med_Hx") & 
+                                     (df.loc[:,"ix_complete"] == "No UFEME") &
+                                     (df.loc[:,"recommendation"] == recommendation)), "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
+    
     # For No Section K Diagnosis Issue
     elif slide_types == "no_section_k":
         num = 1
