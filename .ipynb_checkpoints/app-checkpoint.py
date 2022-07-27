@@ -6,6 +6,8 @@ from datetime import date,timedelta
 import plotly.express as px
 px.set_mapbox_access_token("pk.eyJ1IjoibWFuZnllIiwiYSI6ImNrN2hvc3h1ejBjcWszZ25raXk0Z3VqaTkifQ.5PHi84GwoNUG5v-GMHZP1w")
 
+st.markdown(""" <style> .font {font-size:20px; background-color: #D3D3D3} </style> """, unsafe_allow_html=True)
+
 col1, col2 = st.columns(2)
 with col1:
     st.progress(100)
@@ -47,10 +49,12 @@ if uploaded_file is not None:
         with col1:
             st.container().header(left_upper)
         with col2:
-            st.container().code(right_upper)
+            # st.container().code(right_upper)
+            st.markdown('<p class="font">{}</p>'.format(right_upper.replace("\n", "</br>")), unsafe_allow_html=True)
         st.table(table)
         st.subheader("MAS Recommendation =")
-        st.code(recommendation)
+        # st.code(recommendation)
+        st.markdown('<p class="font">{}</p>'.format(recommendation.replace("\n", "</br>")), unsafe_allow_html=True)
         st.progress(100)
         
     # First Slide
