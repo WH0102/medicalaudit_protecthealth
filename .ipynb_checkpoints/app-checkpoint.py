@@ -136,12 +136,27 @@ if uploaded_file is not None:
         
         # The brief summary on movement
         st.subheader("Summary of provider movement in provider watchlist.")
-        st.table(pw.pivot_table(index = ["colour", "next_colour"],
+        st.table(pw.loc[((pw.loc[:,"colour"].notnull()) | (pw.loc[:,"next_colour"].notnull()))]\
+                   .pivot_table(index = ["colour", "next_colour"],
                                 values = "provider_id",
                                 aggfunc = len,
                                 margins = False)\
                    .rename_axis(None, axis = 1).reset_index()\
-                    .rename(columns = {"provider_id":"Number of Providers"}))
+                   .rename(columns = {"provider_id":"Number of Providers"}))
+        
+        # Number of provider not receiving payment
+        st.subheader("Summary Of Provider Not Receiving Payment")
+        st.dataframe(df.loc[~df.loc[:,"recommendation"].isin(["pay", "paid"])]\
+                       .pivot_table(index = ["provider_id", "provider_name"],
+                                    values = "claim_id",
+                                    aggfunc = len,
+                                    margins = False)\
+                       .rename_axis(None, axis = 1).reset_index()\
+                       .rename(columns = {"claim_id": "Total claim ID not paid"})\
+                       .merge(pw.loc[:,("provider_id", "issue_claims", "pdpa", "section", 
+                                        "ix", "k_lysed", "no_ufeme", "dx", "hs2_issue")],
+                              how = "left", on = "provider_id"))
+                   
         
     # For Financial Summary
     elif slide_types == "Financial Summary":
