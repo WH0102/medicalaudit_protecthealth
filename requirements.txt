@@ -1,6 +1,6 @@
-streamlit==1.11.0
+streamlit==1.11.1
 pandas==1.4.3
-numpy==1.22.3
+numpy==1.23.1
 openpyxl==3.0.10
 plotly==5.9.0
 plotly-express==0.4.1

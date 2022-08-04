@@ -50,7 +50,8 @@ if uploaded_file is not None:
             st.container().header(left_upper)
         with col2:
             # st.container().code(right_upper)
-            st.markdown('<p class="font">{}</p>'.format(right_upper.replace("\n", "</br>")), unsafe_allow_html=True)
+            st.markdown('<p class="font">{}</p>'.format(right_upper.replace("\n", "</br>")\
+                                                                   .replace("'", "")), unsafe_allow_html=True)
         st.table(table)
         st.subheader("MAS Recommendation =")
         # st.code(recommendation)
@@ -235,7 +236,7 @@ if uploaded_file is not None:
                                                               (df.loc[:,"recommendation"] == recommendation))])),
                         "- {} \n".format(tuple(df.loc[((df.loc[:,"slide_type"] == "hs2_issue") & 
                                                        (df.loc[:,"ix_complete"] == "Complete") & 
-                                                       (df.loc[:,"recommendation"] == recommendation)), "pdpa_acceptance"].unique().transpose())) +
+                                                       (df.loc[:,"recommendation"] == recommendation)), "pdpa_1"].unique().transpose())) +
                                     "- 3/3 Sections Done \n" +
                                     "- Complete Result Uploaded \n" +
                                     "- {}".format(tuple(df.loc[((df.loc[:,"slide_type"] == "hs2_issue") & 
@@ -439,7 +440,7 @@ if uploaded_file is not None:
                        (df.loc[:,"ix_complete"] == "No UFEME"))]) >= 1:
             for recommendation in df.loc[((df.loc[:,"slide_type"] == "Med_Hx") & 
                                           (df.loc[:,"ix_complete"] == "No UFEME")), "recommendation"].unique():
-                presentation("{}. {} (n = {})".format(num, recommendation,
+                presentation("{}. {} for no UFEME. (n = {})".format(num, recommendation,
                                                       len(df.loc[((df.loc[:,"slide_type"] == "Med_Hx") & 
                                                                   (df.loc[:,"ix_complete"] == "No UFEME") &
                                                                   (df.loc[:,"recommendation"] == recommendation))])),
