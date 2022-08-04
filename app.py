@@ -548,7 +548,7 @@ if uploaded_file is not None:
     elif slide_types == "issue":
         for recommendation in df.loc[df.loc[:,"slide_type"] == "issue", "recommendation"].unique():
             st.write("{}".format(recommendation))
-            st.dataframe(df.loc[((df.loc[:,"slide_type"] == "issue") & 
+            st.table(df.loc[((df.loc[:,"slide_type"] == "issue") & 
                                  (df.loc[:,"recommendation"] == recommendation))].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
                            .loc[:,("claim_id", "provider_id", "provider_name", "hs1_created_date", "section_done", "pdpa_1", "ix_complete")])
         
