@@ -7,7 +7,10 @@ import plotly.express as px
 px.set_mapbox_access_token("pk.eyJ1IjoibWFuZnllIiwiYSI6ImNrN2hvc3h1ejBjcWszZ25raXk0Z3VqaTkifQ.5PHi84GwoNUG5v-GMHZP1w")
 
 st.markdown(""" <style> .font {font-size:20px; background-color: #D3D3D3}
-                        .stProgress .st-bo {background-color: #87CEEB} </style> """, unsafe_allow_html = True)
+                        .stProgress .st-bo {background-color: #87CEEB} 
+                        .streamlit-expanderHeader {font-size:20px; background-color: #87CEEB}
+                        .finance {font-size:30px; text-align: center; background-color: #87CEEB, color: red}
+                </style> """, unsafe_allow_html = True)
 
 col1, col2 = st.columns(2)
 with col1:
@@ -23,6 +26,7 @@ if uploaded_file is not None:
     df = pd.read_excel(uploaded_file, header = 0, sheet_name = "raw")
     df.loc[:,"hs1_created_date"] = pd.to_datetime(df.loc[:,"hs1_created_date"]).dt.strftime("%d/%m/%y")
     df.loc[:,"hs2_created_date"] = pd.to_datetime(df.loc[:,"hs2_created_date"]).dt.strftime("%d/%m/%y")
+    # df = df.fillna(" ")
     
     # Create side bar
     st.sidebar.write("Choose 1 to present")
@@ -54,22 +58,22 @@ if uploaded_file is not None:
             st.markdown('<p class="font">{}</p>'.format(right_upper.replace("\n", "</br>")\
                                                                    .replace("'", "")), unsafe_allow_html=True)
         st.table(table)
-        st.subheader("Distribution of provider for {}".format(left_upper))
-        st.plotly_chart(px.pie(table.pivot_table(index = ["provider_id", "provider_name"],
-                                                 values = "claim_id",
-                                                 aggfunc = len,
-                                                 margins = False)\
-                                    .rename_axis(None, axis = 1).reset_index().rename(columns = {"claim_id":"Total Claim IDs"}),
-                               height = 700,
-                               values = "Total Claim IDs", 
-                               names = "provider_name")\
-                          .update_traces(textposition = 'auto', 
-                                         insidetextorientation = "horizontal",
-                                         textinfo = 'percent+label+value', 
-                                         textfont_size = 30, 
-                                         sort = False, 
-                                         rotation = 45)\
-                          .update(layout_showlegend = False), use_container_width=True)
+        with st.expander("Distribution of provider for {}".format(left_upper)):
+            st.plotly_chart(px.pie(table.pivot_table(index = ["provider_id", "provider_name"],
+                                                     values = "claim_id",
+                                                     aggfunc = len,
+                                                     margins = False)\
+                                        .rename_axis(None, axis = 1).reset_index().rename(columns = {"claim_id":"Total Claim IDs"}),
+                                   height = 700,
+                                   values = "Total Claim IDs", 
+                                   names = "provider_name")\
+                              .update_traces(textposition = 'auto', 
+                                             insidetextorientation = "horizontal",
+                                             textinfo = 'percent+label+value', 
+                                             textfont_size = 30, 
+                                             sort = False, 
+                                             rotation = 45)\
+                              .update(layout_showlegend = False), use_container_width=True)
         st.subheader("MAS Recommendation =")
         st.markdown('<p class="font">{}</p>'.format(recommendation.replace("\n", "</br>")), unsafe_allow_html=True)
         st.progress(100)
@@ -199,7 +203,8 @@ if uploaded_file is not None:
                                                                    "Verbal Consent/ Re-upload PDPA": 2, 
                                                                    "Others": 3,
                                                                    "All":4})))
-        st.header("Total = RM {}".format(round(df.loc[:,("pay_hs1", "pay_hs2", "pay_lab")].sum(axis = 0).sum()), 0))
+        st.markdown("""<p class="finance">|||   Total = RM {}   |||</p>""".format(round(df.loc[:,("pay_hs1", "pay_hs2", "pay_lab")].sum(axis = 0).sum()), 0),
+                    unsafe_allow_html=True)
         
     # For Potassium Lysed Issue
     elif slide_types == "k_issue":
