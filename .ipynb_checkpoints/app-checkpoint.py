@@ -6,7 +6,8 @@ from datetime import date,timedelta
 import plotly.express as px
 px.set_mapbox_access_token("pk.eyJ1IjoibWFuZnllIiwiYSI6ImNrN2hvc3h1ejBjcWszZ25raXk0Z3VqaTkifQ.5PHi84GwoNUG5v-GMHZP1w")
 
-st.markdown(""" <style> .font {font-size:20px; background-color: #D3D3D3} </style> """, unsafe_allow_html=True)
+st.markdown(""" <style> .font {font-size:20px; background-color: #D3D3D3}
+                        .stProgress .st-bo {background-color: #87CEEB} </style> """, unsafe_allow_html = True)
 
 col1, col2 = st.columns(2)
 with col1:
@@ -400,7 +401,10 @@ if uploaded_file is not None:
     # For UFEME issue
     elif slide_types == "ufeme_issue":
         num = 1
-        for recommendation in df.loc[df.loc[:,"slide_type"] == "ufeme_issue", "recommendation"].unique():
+        for recommendation in df.loc[df.loc[:,"slide_type"] == "ufeme_issue"]\
+                                .sort_values("recommendation", key = lambda x: x.map({"pay":1,
+                                                                                      "exempted":2}))\
+                                .loc[:,"recommendation"].unique():
             presentation("{}. {} (n = {})".format(num, recommendation,
                                                   len(df.loc[((df.loc[:,"slide_type"] == "ufeme_issue") & 
                                                               (df.loc[:,"recommendation"] == recommendation))])),
@@ -488,7 +492,11 @@ if uploaded_file is not None:
     # For Incomplete Result Issue
     elif slide_types == "incomplete_result":
         num = 1
-        for recommendation in df.loc[df.loc[:,"slide_type"] == "incomplete_result", "recommendation"].unique():
+        for recommendation in df.loc[df.loc[:,"slide_type"] == "incomplete_result"]\
+                                .sort_values("recommendation", key = lambda x: x.map({"pay":1,
+                                                                                      "exempted":2,
+                                                                                      "delete":3}))\
+                                .loc[:, "recommendation"].unique():
             presentation("{}. {} (n = {})".format(num, recommendation,
                                                   len(df.loc[((df.loc[:,"slide_type"] == "incomplete_result") & 
                                                               (df.loc[:,"recommendation"] == recommendation))])),
