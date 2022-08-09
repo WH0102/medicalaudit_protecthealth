@@ -240,7 +240,9 @@ if uploaded_file is not None:
             geo_temp.loc[:,"size"] = 10
                              
             # st.write(geo_temp)
-            st.plotly_chart(px.scatter_mapbox(geo_temp, lat = "provider_lat", lon = "provider_lng", color = "provider_type", size = "size"), use_container_width=True)
+            with st.expander("Show Map Between {provider} and {lab}".format(provider = df.loc[((df.loc[:,"slide_type"] == "k_issue") & (df.loc[:,"provider_id"] == provider)), "provider_name"].min(),
+                                                                            lab = tuple(df.loc[((df.loc[:,"slide_type"] == "k_issue") & (df.loc[:,"provider_id"] == provider)), "lab_name"].unique().transpose()))):
+                st.plotly_chart(px.scatter_mapbox(geo_temp, lat = "provider_lat", lon = "provider_lng", color = "provider_type", size = "size"), use_container_width=True)
             num += 1
             
     # For HS2 Issues
