@@ -54,8 +54,23 @@ if uploaded_file is not None:
             st.markdown('<p class="font">{}</p>'.format(right_upper.replace("\n", "</br>")\
                                                                    .replace("'", "")), unsafe_allow_html=True)
         st.table(table)
+        st.subheader("Distribution of provider for {}".format(left_upper))
+        st.plotly_chart(px.pie(table.pivot_table(index = ["provider_id", "provider_name"],
+                                                 values = "claim_id",
+                                                 aggfunc = len,
+                                                 margins = False)\
+                                    .rename_axis(None, axis = 1).reset_index().rename(columns = {"claim_id":"Total Claim IDs"}),
+                               height = 700,
+                               values = "Total Claim IDs", 
+                               names = "provider_name")\
+                          .update_traces(textposition = 'auto', 
+                                         insidetextorientation = "horizontal",
+                                         textinfo = 'percent+label+value', 
+                                         textfont_size = 30, 
+                                         sort = False, 
+                                         rotation = 45)\
+                          .update(layout_showlegend = False), use_container_width=True)
         st.subheader("MAS Recommendation =")
-        # st.code(recommendation)
         st.markdown('<p class="font">{}</p>'.format(recommendation.replace("\n", "</br>")), unsafe_allow_html=True)
         st.progress(100)
         
