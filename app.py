@@ -6,9 +6,10 @@ from datetime import date,timedelta
 import plotly.express as px
 px.set_mapbox_access_token("pk.eyJ1IjoibWFuZnllIiwiYSI6ImNrN2hvc3h1ejBjcWszZ25raXk0Z3VqaTkifQ.5PHi84GwoNUG5v-GMHZP1w")
 
-st.markdown(""" <style> .font {font-size:20px; background-color: #D3D3D3}
+st.markdown(""" <style> .header {font-size:30px; font-variant: small-caps; background-color: #bf00ff}
+                        .font {font-size:20px; background-color: #D3D3D3}
                         .stProgress .st-bo {background-color: #87CEEB} 
-                        .streamlit-expanderHeader {font-size:20px; background-color: #87CEEB}
+                        .streamlit-expanderHeader {font-size:16px; text-align: center; background-color: #87CEEB}
                         .finance {font-size:30px; text-align: center; background-color: #87CEEB, color: red}
                 </style> """, unsafe_allow_html = True)
 
@@ -52,22 +53,33 @@ if uploaded_file is not None:
         st.progress(100)
         col1, col2 = st.columns(2)
         with col1:
-            st.container().header(left_upper)
+            st.markdown('<p class="header">{}</p>'.format(left_upper), unsafe_allow_html=True)
         with col2:
             # st.container().code(right_upper)
             st.markdown('<p class="font">{}</p>'.format(right_upper.replace("\n", "</br>")\
                                                                    .replace("'", "")), unsafe_allow_html=True)
         st.table(table)
         with st.expander("Distribution of provider for {}".format(left_upper)):
-            st.plotly_chart(px.pie(table.pivot_table(index = ["provider_id", "provider_name"],
-                                                     values = "claim_id",
-                                                     aggfunc = len,
-                                                     margins = False)\
-                                        .rename_axis(None, axis = 1).reset_index().rename(columns = {"claim_id":"Total Claim IDs"}),
-                                   height = 700,
-                                   values = "Total Claim IDs", 
-                                   names = "provider_name")\
-                              .update_traces(textposition = 'auto', 
+            col1, col2 = st.columns(2)
+            with col1:
+                st.dataframe(table.pivot_table(index = ["provider_id", "provider_name"],
+                                               values = "claim_id",
+                                               aggfunc = len,
+                                               margins = False)\
+                                  .sort_values("claim_id", ascending = False)\
+                                  .rename_axis(None, axis = 1).reset_index())
+            with col2:
+                pie_df = table.pivot_table(index = ["provider_id", "provider_name"],
+                                                         values = "claim_id",
+                                                         aggfunc = len,
+                                                         margins = False)\
+                                        .rename_axis(None, axis = 1).reset_index().rename(columns = {"claim_id":"Total Claim IDs"})
+                pie_df.loc[:,"provider_id_name"] = "ID = " + pie_df.loc[:,"provider_id"].astype(str) + ", " + pie_df.loc[:,"provider_name"].astype(str)
+                st.plotly_chart(px.pie(pie_df,
+                                       height = 700,
+                                       values = "Total Claim IDs", 
+                                       names = "provider_id_name")\
+                              .update_traces(textposition = 'inside', 
                                              insidetextorientation = "horizontal",
                                              textinfo = 'percent+label+value', 
                                              textfont_size = 30, 
@@ -210,19 +222,18 @@ if uploaded_file is not None:
     elif slide_types == "k_issue":
         num = 1
         for provider in df.loc[df.loc[:,"slide_type"] == "k_issue", "provider_id"].sort_values().unique():
-            presentation("{}. Provider ID = {}, {}, from {}, (n = {}) \n Distance Between Provider And Lab = {}km"\
+            presentation("{}. Provider ID = {}, {}, from {}, (n = {})"\
                              .format(num, provider, 
                                      df.loc[df.loc[:,"provider_id"] == provider, "provider_name"].min(),
                                      df.loc[df.loc[:,"provider_id"] == provider, "lab_state"].reset_index().loc[0,"lab_state"],
-                                     len(df.loc[((df.loc[:,"slide_type"] == "k_issue") & (df.loc[:,"provider_id"] == provider))]),
-                                     df.loc[df.loc[:,"provider_id"] == provider, "distance"].min()),
+                                     len(df.loc[((df.loc[:,"slide_type"] == "k_issue") & (df.loc[:,"provider_id"] == provider))])),
                          "- Complete PDPA/ Incomplete PDPA (No Date Only) \n" +
                          "- 3/3 Sections Done \n" +
                          "- Complete Result Uploaded \n" +
                          "- Correct Diagnosis",
                          df.loc[((df.loc[:,"slide_type"] == "k_issue") & 
                                  (df.loc[:,"provider_id"] == provider))].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
-                           .loc[:,("claim_id", "provider_id", "provider_name", "hs1_created_date", "payment_hs2", "payment_lab", "ix_justification")],
+                           .loc[:,("claim_id", "provider_id", "provider_name", "lab_name", "hs1_created_date", "payment_hs2", "payment_lab", "ix_justification")],
                          df.loc[((df.loc[:,"slide_type"] == "k_issue") & 
                                  (df.loc[:,"provider_id"] == provider)), "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
             provider_geo = df.loc[((df.loc[:,"slide_type"] == slide_types) & 
@@ -239,9 +250,11 @@ if uploaded_file is not None:
             geo_temp = pd.concat([provider_geo, lab_geo], ignore_index = True)
             geo_temp.loc[:,"size"] = 10
                              
-            # st.write(geo_temp)
-            with st.expander("Show Map Between {provider} and {lab}".format(provider = df.loc[((df.loc[:,"slide_type"] == "k_issue") & (df.loc[:,"provider_id"] == provider)), "provider_name"].min(),
-                                                                            lab = tuple(df.loc[((df.loc[:,"slide_type"] == "k_issue") & (df.loc[:,"provider_id"] == provider)), "lab_name"].unique().transpose()))):
+            # st.write(geo_temp) </br>Distance Between Provider And Lab = {}km
+            with st.expander("Show Map Between {provider} and {lab}, distince = {distance}km"\
+                             .format(provider = df.loc[((df.loc[:,"slide_type"] == "k_issue") & (df.loc[:,"provider_id"] == provider)), "provider_name"].min(),
+                                     lab = tuple(df.loc[((df.loc[:,"slide_type"] == "k_issue") & (df.loc[:,"provider_id"] == provider)), "lab_name"].unique().transpose()),
+                                     distance = tuple(df.loc[df.loc[:,"provider_id"] == provider, "distance"].unique().transpose()))):
                 st.plotly_chart(px.scatter_mapbox(geo_temp, lat = "provider_lat", lon = "provider_lng", 
                                                   color = "provider_type", size = "size", text = "provider_name")\
                                     .update_traces(textposition='top center'), use_container_width=True)
