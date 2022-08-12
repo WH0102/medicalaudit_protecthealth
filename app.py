@@ -6,7 +6,7 @@ from datetime import date,timedelta
 import plotly.express as px
 px.set_mapbox_access_token("pk.eyJ1IjoibWFuZnllIiwiYSI6ImNrN2hvc3h1ejBjcWszZ25raXk0Z3VqaTkifQ.5PHi84GwoNUG5v-GMHZP1w")
 
-st.markdown(""" <style> .header {font-size:30px; font-variant: small-caps; background-color: #bf00ff}
+st.markdown(""" <style> .header {font-size:30px; text-transform: capitalize; font-variant: small-caps; background-color: #bf00ff}
                         .font {font-size:20px; background-color: #D3D3D3}
                         .stProgress .st-bo {background-color: #87CEEB} 
                         .streamlit-expanderHeader {font-size:16px; text-align: center; background-color: #87CEEB}
