@@ -222,43 +222,45 @@ if uploaded_file is not None:
     elif slide_types == "k_issue":
         num = 1
         for provider in df.loc[df.loc[:,"slide_type"] == "k_issue", "provider_id"].sort_values().unique():
-            presentation("{}. Provider ID = {}, {}, from {}, (n = {})"\
-                             .format(num, provider, 
-                                     df.loc[df.loc[:,"provider_id"] == provider, "provider_name"].min(),
-                                     df.loc[df.loc[:,"provider_id"] == provider, "lab_state"].reset_index().loc[0,"lab_state"],
-                                     len(df.loc[((df.loc[:,"slide_type"] == "k_issue") & (df.loc[:,"provider_id"] == provider))])),
-                         "- Complete PDPA/ Incomplete PDPA (No Date Only) \n" +
-                         "- 3/3 Sections Done \n" +
-                         "- Complete Result Uploaded \n" +
-                         "- Correct Diagnosis",
-                         df.loc[((df.loc[:,"slide_type"] == "k_issue") & 
-                                 (df.loc[:,"provider_id"] == provider))].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
-                           .loc[:,("claim_id", "provider_id", "provider_name", "lab_name", "hs1_created_date", "payment_hs2", "payment_lab", "ix_justification")],
-                         df.loc[((df.loc[:,"slide_type"] == "k_issue") & 
-                                 (df.loc[:,"provider_id"] == provider)), "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
-            provider_geo = df.loc[((df.loc[:,"slide_type"] == slide_types) & 
-                                   (df.loc[:,"provider_id"] == provider)), 
-                                   ("provider_id", "provider_name", "provider_type", "provider_lat", "provider_lng")].drop_duplicates(subset = "provider_id")
-            lab_geo = df.loc[((df.loc[:,"slide_type"] == slide_types) & 
-                              (df.loc[:,"provider_id"] == provider)),
-                              ("lab_id", "lab_name", "provider_type", "lab_lat", "lab_lng")].drop_duplicates(subset = "lab_id")\
-                        .rename(columns = {"lab_id": "provider_id",
-                                           "lab_name": "provider_name",
-                                            "lab_lat": "provider_lat",
-                                            "lab_lng": "provider_lng"})
-            lab_geo.loc[:,"provider_type"] = "Lab"
-            geo_temp = pd.concat([provider_geo, lab_geo], ignore_index = True)
-            geo_temp.loc[:,"size"] = 10
-                             
-            # st.write(geo_temp) </br>Distance Between Provider And Lab = {}km
-            with st.expander("Show Map Between {provider} and {lab}, distince = {distance}km"\
-                             .format(provider = df.loc[((df.loc[:,"slide_type"] == "k_issue") & (df.loc[:,"provider_id"] == provider)), "provider_name"].min(),
-                                     lab = tuple(df.loc[((df.loc[:,"slide_type"] == "k_issue") & (df.loc[:,"provider_id"] == provider)), "lab_name"].unique().transpose()),
-                                     distance = tuple(df.loc[df.loc[:,"provider_id"] == provider, "distance"].unique().transpose()))):
-                st.plotly_chart(px.scatter_mapbox(geo_temp, lat = "provider_lat", lon = "provider_lng", 
-                                                  color = "provider_type", size = "size", text = "provider_name")\
-                                    .update_traces(textposition='top center'), use_container_width=True)
-            num += 1
+            if len(df.loc[((df.loc[:,"slide_type"] == slide_types) & 
+                                   (df.loc[:,"provider_id"] == provider))]) >=5:
+                presentation("{}. Provider ID = {}, {}, from {}, (n = {})"\
+                                .format(num, provider, 
+                                        df.loc[df.loc[:,"provider_id"] == provider, "provider_name"].min(),
+                                        df.loc[df.loc[:,"provider_id"] == provider, "lab_state"].reset_index().loc[0,"lab_state"],
+                                        len(df.loc[((df.loc[:,"slide_type"] == "k_issue") & (df.loc[:,"provider_id"] == provider))])),
+                             "- Complete PDPA/ Incomplete PDPA (No Date Only) \n" +
+                             "- 3/3 Sections Done \n" +
+                             "- Complete Result Uploaded \n" +
+                             "- Correct Diagnosis",
+                             df.loc[((df.loc[:,"slide_type"] == "k_issue") & 
+                                     (df.loc[:,"provider_id"] == provider))].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
+                               .loc[:,("claim_id", "provider_id", "provider_name", "lab_name", "hs1_created_date", "payment_hs2", "payment_lab", "ix_justification")],
+                             df.loc[((df.loc[:,"slide_type"] == "k_issue") & 
+                                     (df.loc[:,"provider_id"] == provider)), "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
+                provider_geo = df.loc[((df.loc[:,"slide_type"] == slide_types) & 
+                                       (df.loc[:,"provider_id"] == provider)), 
+                                       ("provider_id", "provider_name", "provider_type", "provider_lat", "provider_lng")].drop_duplicates(subset = "provider_id")
+                lab_geo = df.loc[((df.loc[:,"slide_type"] == slide_types) & 
+                                  (df.loc[:,"provider_id"] == provider)),
+                                  ("lab_id", "lab_name", "provider_type", "lab_lat", "lab_lng")].drop_duplicates(subset = "lab_id")\
+                            .rename(columns = {"lab_id": "provider_id",
+                                               "lab_name": "provider_name",
+                                                "lab_lat": "provider_lat",
+                                                "lab_lng": "provider_lng"})
+                lab_geo.loc[:,"provider_type"] = "Lab"
+                geo_temp = pd.concat([provider_geo, lab_geo], ignore_index = True)
+                geo_temp.loc[:,"size"] = 10
+                                 
+                # st.write(geo_temp) </br>Distance Between Provider And Lab = {}km
+                with st.expander("Show Map Between {provider} and {lab}, distince = {distance}km"\
+                                 .format(provider = df.loc[((df.loc[:,"slide_type"] == "k_issue") & (df.loc[:,"provider_id"] == provider)), "provider_name"].min(),
+                                         lab = tuple(df.loc[((df.loc[:,"slide_type"] == "k_issue") & (df.loc[:,"provider_id"] == provider)), "lab_name"].unique().transpose()),
+                                         distance = tuple(df.loc[df.loc[:,"provider_id"] == provider, "distance"].unique().transpose()))):
+                    st.plotly_chart(px.scatter_mapbox(geo_temp, lat = "provider_lat", lon = "provider_lng", 
+                                                      color = "provider_type", size = "size", text = "provider_name")\
+                                        .update_traces(textposition='top center'), use_container_width=True)
+                num += 1
             
     # For HS2 Issues
     elif slide_types == "hs2_issue":
