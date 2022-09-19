@@ -44,7 +44,9 @@ if uploaded_file is not None:
                                                                                "no_section_k":7,
                                                                                "incomplete_section":8,
                                                                                "incomplete_result":9,
-                                                                               "delete":10}))\
+                                                                               "ix_issue":10,
+                                                                               "delete":11,
+                                                                               "session":12}))\
                                            .loc[:,"slide_type"].unique().transpose()) + 
                                    ("Provider Watchlist", "Financial Summary"))
     
@@ -598,6 +600,16 @@ if uploaded_file is not None:
             st.table(df.loc[((df.loc[:,"slide_type"] == "issue") & 
                                  (df.loc[:,"recommendation"] == recommendation))].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
                            .loc[:,("claim_id", "provider_id", "provider_name", "hs1_created_date", "section_done", "pdpa_1", "ix_complete")])
+            
+    # For session
+    elif slide_types == "session":
+        presentation("Suggest to have 1 to 1 session with provider. (n= {})".format(len(df.loc[df.loc[:,"slide_type"] == "session"])),
+                     "- {} \n".format(tuple(df.loc[df.loc[:,"slide_type"] == "session" , "pdpa_acceptance"].unique().transpose())) +
+                     "- {} Sections Done \n".format(tuple(df.loc[df.loc[:,"slide_type"] == "session", "section_done"].unique().transpose())) +
+                     "- {} \n".format(tuple(df.loc[df.loc[:,"slide_type"] == "session", "ix_complete"].unique().transpose())),
+                     df.loc[df.loc[:,"slide_type"] == "session"].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
+                       .loc[:,("claim_id", "provider_id", "provider_name", "hs1_created_date", "section_done", "pdpa_1", "ix_complete")],
+                     df.loc[df.loc[:,"slide_type"] == "session", "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
         
     # For Paid Claims
     elif slide_types == "paid":
