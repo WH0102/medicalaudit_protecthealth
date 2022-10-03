@@ -46,7 +46,8 @@ if uploaded_file is not None:
                                                                                "incomplete_result":9,
                                                                                "ix_issue":10,
                                                                                "delete":11,
-                                                                               "session":12}))\
+                                                                               "session":12,
+                                                                               "deceased":13}))\
                                            .loc[:,"slide_type"].unique().transpose()) + 
                                    ("Provider Watchlist", "Financial Summary"))
     
@@ -601,6 +602,16 @@ if uploaded_file is not None:
                                  (df.loc[:,"recommendation"] == recommendation))].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
                            .loc[:,("claim_id", "provider_id", "provider_name", "hs1_created_date", "section_done", "pdpa_1", "ix_complete")])
             
+    elif slide_types == "deceased":
+        presentation("Deceased (n= {})".format(len(df.loc[df.loc[:,"slide_type"] == "deceased"])),
+                     "- {} \n".format(tuple(df.loc[df.loc[:,"slide_type"] == "deceased" , "pdpa_acceptance"].unique().transpose())) +
+                     "- {} Sections Done \n".format(tuple(df.loc[df.loc[:,"slide_type"] == "deceased", "section_done"].unique().transpose())) +
+                     "- {} \n".format(tuple(df.loc[df.loc[:,"slide_type"] == "deceased", "ix_complete"].unique().transpose())) +
+                     "- {}".format(tuple(df.loc[df.loc[:,"slide_type"] == "deceased", "diagnosis2"].unique().transpose())),
+                     df.loc[df.loc[:,"slide_type"] == "deceased"].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
+                       .loc[:,("claim_id", "provider_id", "provider_name", "hs1_created_date", "pdpa_1", "section_done", "ix_complete", "miss_wrong_diag")],
+                     df.loc[df.loc[:,"slide_type"] == "deceased", "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
+            
     # For session
     elif slide_types == "session":
         presentation("Suggest to have 1 to 1 session with provider. (n= {})".format(len(df.loc[df.loc[:,"slide_type"] == "session"])),
@@ -608,7 +619,7 @@ if uploaded_file is not None:
                      "- {} Sections Done \n".format(tuple(df.loc[df.loc[:,"slide_type"] == "session", "section_done"].unique().transpose())) +
                      "- {} \n".format(tuple(df.loc[df.loc[:,"slide_type"] == "session", "ix_complete"].unique().transpose())),
                      df.loc[df.loc[:,"slide_type"] == "session"].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
-                       .loc[:,("claim_id", "provider_id", "provider_name", "hs1_created_date", "section_done", "pdpa_1", "ix_complete")],
+                       .loc[:,("claim_id", "provider_id", "provider_name", "hs1_created_date", "pdpa_1", "section_done", "ix_complete")],
                      df.loc[df.loc[:,"slide_type"] == "session", "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
         
     # For Paid Claims
