@@ -27,13 +27,12 @@ if uploaded_file is not None:
     @st.cache(suppress_st_warning=True)
     def read_excel(uploaded_file):
         df = pd.read_excel(uploaded_file, header = 0, sheet_name = "raw")
-        df.loc[:,"hs1_created_date"] = pd.to_datetime(df.loc[:,"hs1_created_date"]).dt.strftime("%d/%m/%y")
-        df.loc[:,"hs2_created_date"] = pd.to_datetime(df.loc[:,"hs2_created_date"]).dt.strftime("%d/%m/%y")
-        
         pw = pd.read_excel(uploaded_file, header = 0, sheet_name = "provider_watchlist")
         return df, pw
     
     df, pw = read_excel(uploaded_file)
+    df.loc[:,"hs1_created_date"] = pd.to_datetime(df.loc[:,"hs1_created_date"]).dt.strftime("%d/%m/%y")
+    df.loc[:,"hs2_created_date"] = pd.to_datetime(df.loc[:,"hs2_created_date"]).dt.strftime("%d/%m/%y")
     # df = df.fillna(" ")
     
     # Create side bar
