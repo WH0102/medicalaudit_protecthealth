@@ -24,7 +24,6 @@ with col2:
 
 # Trial to set is the file not empty then set  df
 if uploaded_file is not None:
-    @st.cache(suppress_st_warning=True)
     def read_excel(uploaded_file):
         df = pd.read_excel(uploaded_file, header = 0, sheet_name = "raw")
         pw = pd.read_excel(uploaded_file, header = 0, sheet_name = "provider_watchlist")
