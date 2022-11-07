@@ -32,6 +32,7 @@ if uploaded_file is not None:
     df, pw = read_excel(uploaded_file)
     df.loc[:,"hs1_created_date"] = pd.to_datetime(df.loc[:,"hs1_created_date"]).dt.strftime("%d/%m/%y")
     df.loc[:,"hs2_created_date"] = pd.to_datetime(df.loc[:,"hs2_created_date"]).dt.strftime("%d/%m/%y")
+    df.loc[:,"hs1_creation_year"] = pd.to_datetime(df.loc[:,"hs1_created_date"]).dt.strftime("%Y")
     # df = df.fillna(" ")
     
     # Create side bar
@@ -100,6 +101,24 @@ if uploaded_file is not None:
         
     # First Slide
     if slide_types == "Overall Summary":
+        st.subheader("Distribution of Claim IDs that escalated to MAS based on claim creation year. (n={})".format(len(df)))
+        st.plotly_chart(px.pie(df.pivot_table(index = "hs1_creation_year",
+                                              values = "claim_id",
+                                              aggfunc = len,
+                                              margins = False)\
+                                 .rename_axis(None, axis = 1).reset_index().rename(columns = {"claim_id":"Total"}), 
+                               height = 700,
+                               values = "Total", 
+                               names = "hs1_creation_year")\
+                          .update_traces(textposition = 'auto', 
+                                         insidetextorientation = "horizontal",
+                                         textinfo = 'percent+label+value', 
+                                         textfont_size = 30, 
+                                         sort = False, 
+                                         rotation = 45)\
+                          .update(layout_showlegend = False), use_container_width=True)
+        
+        
         st.subheader("Distribution of Claim IDs that escalated to MAS based on provider type. (n={})".format(len(df)))
         st.plotly_chart(px.pie(df.drop_duplicates(subset = "provider_id")\
                                  .pivot_table(index = "provider_type",
