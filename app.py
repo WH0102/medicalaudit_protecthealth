@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from datetime import date,timedelta
 import plotly.express as px
+import re
 px.set_mapbox_access_token("pk.eyJ1IjoibWFuZnllIiwiYSI6ImNrN2hvc3h1ejBjcWszZ25raXk0Z3VqaTkifQ.5PHi84GwoNUG5v-GMHZP1w")
 
 st.markdown(""" <style> .header {font-size:30px; text-transform: capitalize; font-variant: small-caps; background-color: #bf00ff}
@@ -118,6 +119,8 @@ if uploaded_file is not None:
                                          rotation = 45)\
                           .update(layout_showlegend = False), use_container_width=True)
         
+        if date.today() >= date(2022, 11, 7) and date.today() <= date(2022, 11, 15):
+            st.subheader("Remnant of claims earlier than 2022 = 1670 (133 need to relook)")        
         
         st.subheader("Distribution of Claim IDs that escalated to MAS based on provider type. (n={})".format(len(df)))
         st.plotly_chart(px.pie(df.drop_duplicates(subset = "provider_id")\
