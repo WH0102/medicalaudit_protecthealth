@@ -29,9 +29,11 @@ if uploaded_file is not None:
         df = pd.read_excel(uploaded_file, header = 0, sheet_name = "raw")
         df.loc[:,"hs1_created_date"] = pd.to_datetime(df.loc[:,"hs1_created_date"]).dt.strftime("%d/%m/%y")
         df.loc[:,"hs2_created_date"] = pd.to_datetime(df.loc[:,"hs2_created_date"]).dt.strftime("%d/%m/%y")
-        return df
+        
+        pw = pd.read_excel(uploaded_file, header = 0, sheet_name = "provider_watchlist")
+        return df, pw
     
-    df = read_excel(uploaded_file)
+    df, pw = read_excel(uploaded_file)
     # df = df.fillna(" ")
     
     # Create side bar
@@ -163,7 +165,6 @@ if uploaded_file is not None:
     elif slide_types == "Provider Watchlist":
         st.subheader("Update on Provider Watchlist:")
         # The main table
-        pw = pd.read_excel(uploaded_file, header = 0, sheet_name = "provider_watchlist")
         pw.loc[:,("issue_claims", "pdpa", "section", 
                   "ix", "k_lysed", "no_ufeme", "dx", "hs2_issue")] = pw.loc[:,("issue_claims", "pdpa", "section", 
                                                                                "ix", "k_lysed", "no_ufeme", "dx", "hs2_issue")]\
