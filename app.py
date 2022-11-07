@@ -24,9 +24,14 @@ with col2:
 
 # Trial to set is the file not empty then set  df
 if uploaded_file is not None:
-    df = pd.read_excel(uploaded_file, header = 0, sheet_name = "raw")
-    df.loc[:,"hs1_created_date"] = pd.to_datetime(df.loc[:,"hs1_created_date"]).dt.strftime("%d/%m/%y")
-    df.loc[:,"hs2_created_date"] = pd.to_datetime(df.loc[:,"hs2_created_date"]).dt.strftime("%d/%m/%y")
+    @st.cache(suppress_st_warning=True)
+    def read_excel(uploaded_file):
+        df = pd.read_excel(uploaded_file, header = 0, sheet_name = "raw")
+        df.loc[:,"hs1_created_date"] = pd.to_datetime(df.loc[:,"hs1_created_date"]).dt.strftime("%d/%m/%y")
+        df.loc[:,"hs2_created_date"] = pd.to_datetime(df.loc[:,"hs2_created_date"]).dt.strftime("%d/%m/%y")
+        return df
+    
+    df = read_excel(uploaded_file)
     # df = df.fillna(" ")
     
     # Create side bar
