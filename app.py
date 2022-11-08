@@ -120,7 +120,7 @@ if uploaded_file is not None:
                           .update(layout_showlegend = False), use_container_width=True)
         
         if date.today() >= date(2022, 11, 7) and date.today() <= date(2022, 11, 15):
-            st.subheader("Remnant of claims earlier than 2022 = 1670 (133 need to relook)")        
+            st.subheader("Remnant of claims earlier than 2022 = 1670 (560 need to relook)")        
         
         st.subheader("Distribution of Claim IDs that escalated to MAS based on provider type. (n={})".format(len(df)))
         st.plotly_chart(px.pie(df.drop_duplicates(subset = "provider_id")\
