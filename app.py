@@ -253,6 +253,9 @@ if uploaded_file is not None:
         for provider in df.loc[df.loc[:,"slide_type"] == "k_issue", "provider_id"].sort_values().unique():
             if len(df.loc[((df.loc[:,"slide_type"] == slide_types) & 
                                    (df.loc[:,"provider_id"] == provider))]) >=5:
+                df_to_display = df.loc[((df.loc[:,"slide_type"] == "k_issue") & 
+                                     (df.loc[:,"provider_id"] == provider))].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
+                                  .loc[:,("claim_id", "provider_id", "provider_name", "lab_name", "hs1_created_date", "payment_hs2", "payment_lab", "ix_justification")]
                 presentation("{}. Provider ID = {}, {}, from {}, (n = {})"\
                                 .format(num, provider, 
                                         df.loc[df.loc[:,"provider_id"] == provider, "provider_name"].min(),
@@ -262,14 +265,13 @@ if uploaded_file is not None:
                              "- 3/3 Sections Done \n" +
                              "- Complete Result Uploaded \n" +
                              "- Correct Diagnosis",
-                             df.loc[((df.loc[:,"slide_type"] == "k_issue") & 
-                                     (df.loc[:,"provider_id"] == provider))].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
-                               .loc[:,("claim_id", "provider_id", "provider_name", "lab_name", "hs1_created_date", "payment_hs2", "payment_lab", "ix_justification")],
+                             df_to_display,
                              df.loc[((df.loc[:,"slide_type"] == "k_issue") & 
                                      (df.loc[:,"provider_id"] == provider)), "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
+                # To display on geometric information
                 provider_geo = df.loc[((df.loc[:,"slide_type"] == slide_types) & 
                                        (df.loc[:,"provider_id"] == provider)), 
-                                       ("provider_id", "provider_name", "provider_type", "provider_lat", "provider_lng")].drop_duplicates(subset = "provider_id")
+                                       ("provider_id", "provider_name", "provider_type", "colour", "provider_lat", "provider_lng")].drop_duplicates(subset = "provider_id")
                 lab_geo = df.loc[((df.loc[:,"slide_type"] == slide_types) & 
                                   (df.loc[:,"provider_id"] == provider)),
                                   ("lab_id", "lab_name", "provider_type", "lab_lat", "lab_lng")].drop_duplicates(subset = "lab_id")\
@@ -314,7 +316,7 @@ if uploaded_file is not None:
                          df.loc[((df.loc[:,"slide_type"] == "hs2_issue") & 
                                  (df.loc[:,"ix_complete"] == "Complete") & 
                                  (df.loc[:,"recommendation"] == recommendation))].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
-                           .loc[:,("claim_id", "provider_id", "provider_name", "hs2_created_date", "hs2_issue", "payment_hs1", "payment_lab", "hs2_justification", "normal_diag")],
+                           .loc[:,("claim_id", "provider_id", "provider_name",  "colour", "hs2_created_date", "hs2_issue", "payment_hs1", "payment_lab", "hs2_justification", "normal_diag")],
                         df.loc[((df.loc[:,"slide_type"] == "hs2_issue") & 
                                 (df.loc[:,"ix_complete"] == "Complete") & 
                                 (df.loc[:,"recommendation"] == recommendation)), "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
@@ -341,7 +343,7 @@ if uploaded_file is not None:
                             df.loc[((df.loc[:,"slide_type"] == "hs2_issue") & 
                                     (df.loc[:,"ix_complete"] == "No UFEME") & 
                                     (df.loc[:,"recommendation"] == recommendation))].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
-                              .loc[:,("claim_id", "provider_id", "provider_name", "hs2_created_date", "hs2_issue", "payment_hs1", "payment_lab", "hs2_justification", "ix_justification", "normal_diag")],
+                              .loc[:,("claim_id", "provider_id", "provider_name",  "colour", "hs2_created_date", "hs2_issue", "payment_hs1", "payment_lab", "hs2_justification", "ix_justification", "normal_diag")],
                             df.loc[((df.loc[:,"slide_type"] == "hs2_issue") & 
                                     (df.loc[:,"ix_complete"] == "No UFEME") & 
                                     (df.loc[:,"recommendation"] == recommendation)), "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
@@ -374,7 +376,7 @@ if uploaded_file is not None:
                          df.loc[((df.loc[:,"slide_type"] == "pdpa_issue") & 
                                  (df.loc[:,"ix_complete"] == "Complete") & 
                                  (df.loc[:,"recommendation"] == recommendation))].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
-                           .loc[:,("claim_id", "provider_id", "provider_name", "hs1_created_date", "payment_hs2", "payment_lab", "pdpa_1", "miss_wrong_diag")],
+                           .loc[:,("claim_id", "provider_id", "provider_name",  "colour", "hs1_created_date", "payment_hs2", "payment_lab", "pdpa_1", "miss_wrong_diag")],
                         df.loc[((df.loc[:,"slide_type"] == "pdpa_issue") & 
                                 (df.loc[:,"ix_complete"] == "Complete") & 
                                 (df.loc[:,"recommendation"] == recommendation)), "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
@@ -405,7 +407,7 @@ if uploaded_file is not None:
                             df.loc[((df.loc[:,"slide_type"] == "pdpa_issue") & 
                                     (df.loc[:,"ix_complete"] == "No UFEME") & 
                                     (df.loc[:,"recommendation"] == recommendation))].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
-                              .loc[:,("claim_id", "provider_id", "provider_name", "hs2_created_date", "payment_hs2", "payment_lab", "pdpa_1", "miss_wrong_diag", "ix_justification")],
+                              .loc[:,("claim_id", "provider_id", "provider_name",  "colour", "hs2_created_date", "payment_hs2", "payment_lab", "pdpa_1", "miss_wrong_diag", "ix_justification")],
                             df.loc[((df.loc[:,"slide_type"] == "pdpa_issue") & 
                                     (df.loc[:,"ix_complete"] == "No UFEME") & 
                                     (df.loc[:,"recommendation"] == recommendation)), "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
@@ -434,7 +436,7 @@ if uploaded_file is not None:
                          df.loc[((df.loc[:,"slide_type"] == "diagnosis_issue") & 
                                  (df.loc[:,"ix_complete"] == "Complete") & 
                                  (df.loc[:,"recommendation"] == recommendation))].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
-                           .loc[:,("claim_id", "provider_id", "provider_name", "hs1_created_date", "payment_hs2", "payment_lab", "miss_wrong_diag", "normal_diag")],
+                           .loc[:,("claim_id", "provider_id", "provider_name",  "colour", "hs1_created_date", "payment_hs2", "payment_lab", "miss_wrong_diag", "normal_diag")],
                         df.loc[((df.loc[:,"slide_type"] == "diagnosis_issue") & 
                                 (df.loc[:,"ix_complete"] == "Complete") & 
                                 (df.loc[:,"recommendation"] == recommendation)), "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
@@ -460,7 +462,7 @@ if uploaded_file is not None:
                              df.loc[((df.loc[:,"slide_type"] == "diagnosis_issue") & 
                                      (df.loc[:,"ix_complete"] == "No UFEME") & 
                                      (df.loc[:,"recommendation"] == recommendation))].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
-                               .loc[:,("claim_id", "provider_id", "provider_name", "hs1_created_date", "payment_hs2", "payment_lab", "miss_wrong_diag", "normal_diag", "ix_justification")],
+                               .loc[:,("claim_id", "provider_id", "provider_name",  "colour", "hs1_created_date", "payment_hs2", "payment_lab", "miss_wrong_diag", "normal_diag", "ix_justification")],
                             df.loc[((df.loc[:,"slide_type"] == "diagnosis_issue") & 
                                     (df.loc[:,"ix_complete"] == "No UFEME") & 
                                     (df.loc[:,"recommendation"] == recommendation)), "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
@@ -482,7 +484,7 @@ if uploaded_file is not None:
                          "- Correct Diagnosis",
                          df.loc[(df.loc[:,"slide_type"] == "ufeme_issue") & 
                                 (df.loc[:,"recommendation"] == recommendation)].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
-                           .loc[:,("claim_id", "provider_id", "provider_name", "hs1_created_date", "payment_hs2", "ix_justification")],
+                           .loc[:,("claim_id", "provider_id", "provider_name", "colour", "hs1_created_date", "payment_hs2", "ix_justification")],
                          df.loc[((df.loc[:,"slide_type"] == "ufeme_issue") & 
                                 (df.loc[:,"recommendation"] == recommendation)), "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
             num += 1
@@ -503,7 +505,7 @@ if uploaded_file is not None:
                          df.loc[(df.loc[:,"slide_type"] == "Med_Hx") & 
                                 (df.loc[:,"ix_complete"] == "Complete") &
                                 (df.loc[:,"recommendation"] == recommendation)].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
-                           .loc[:,("claim_id", "provider_id", "provider_name", "hs1_created_date", "payment_hs2")],
+                           .loc[:,("claim_id", "provider_id", "provider_name", "colour", "hs1_created_date", "payment_hs2")],
                          df.loc[((df.loc[:,"slide_type"] == "Med_Hx") & 
                                  (df.loc[:,"ix_complete"] == "Complete") &
                                  (df.loc[:,"recommendation"] == recommendation)), "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
@@ -523,7 +525,7 @@ if uploaded_file is not None:
                              df.loc[(df.loc[:,"slide_type"] == "Med_Hx") & 
                                     (df.loc[:,"ix_complete"] == "No UFEME") &
                                     (df.loc[:,"recommendation"] == recommendation)].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
-                               .loc[:,("claim_id", "provider_id", "provider_name", "hs1_created_date", "payment_hs2", "ix_justification")],
+                               .loc[:,("claim_id", "provider_id", "provider_name", "colour", "hs1_created_date", "payment_hs2", "ix_justification")],
                              df.loc[((df.loc[:,"slide_type"] == "Med_Hx") & 
                                      (df.loc[:,"ix_complete"] == "No UFEME") &
                                      (df.loc[:,"recommendation"] == recommendation)), "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
@@ -542,7 +544,7 @@ if uploaded_file is not None:
                          "- Section K No Diagnosis",
                          df.loc[(df.loc[:,"slide_type"] == "no_section_k") & 
                                 (df.loc[:,"recommendation"] == recommendation)].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
-                           .loc[:,("claim_id", "provider_id", "provider_name", "hs1_created_date", "payment_hs2", "pdpa_1", "normal_diag")],
+                           .loc[:,("claim_id", "provider_id", "provider_name", "colour", "hs1_created_date", "payment_hs2", "pdpa_1", "normal_diag")],
                          df.loc[((df.loc[:,"slide_type"] == "no_section_k") & 
                                 (df.loc[:,"recommendation"] == recommendation)), "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
             num += 1
@@ -554,7 +556,7 @@ if uploaded_file is not None:
                      "- 0 Sections Done \n" +
                      "- {} \n".format(tuple(df.loc[df.loc[:,"slide_type"] == "incomplete_section", "ix_complete"].unique().transpose())),
                      df.loc[df.loc[:,"slide_type"] == "incomplete_section"].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
-                       .loc[:,("claim_id", "provider_id", "provider_name", "hs1_created_date", "pdpa_1")],
+                       .loc[:,("claim_id", "provider_id", "provider_name", "colour", "hs1_created_date", "pdpa_1")],
                      df.loc[df.loc[:,"slide_type"] == "incomplete_section", "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
         
     # For Incomplete Result Issue
@@ -577,7 +579,7 @@ if uploaded_file is not None:
                                                      (df.loc[:,"recommendation"] == recommendation)), "diagnosis2"].unique().transpose())),
                          df.loc[(df.loc[:,"slide_type"] == "incomplete_result") & 
                                 (df.loc[:,"recommendation"] == recommendation)].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
-                           .loc[:,("claim_id", "provider_id", "provider_name", "hs1_created_date", "payment_hs2", "pdpa_1", "ix_complete", "ix_justification")],
+                           .loc[:,("claim_id", "provider_id", "provider_name", "colour", "hs1_created_date", "payment_hs2", "pdpa_1", "ix_complete", "ix_justification")],
                          df.loc[((df.loc[:,"slide_type"] == "incomplete_result") & 
                                 (df.loc[:,"recommendation"] == recommendation)), "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
             num += 1
@@ -605,7 +607,7 @@ if uploaded_file is not None:
                                                      (df.loc[:,"recommendation"] == recommendation)), "diagnosis2"].unique().transpose())),
                          df.loc[(df.loc[:,"slide_type"] == "ix_issue") & 
                                 (df.loc[:,"recommendation"] == recommendation)].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
-                           .loc[:,("claim_id", "provider_id", "provider_name", "hs1_created_date", "payment_hs2", "pdpa_1", "ix_justification")],
+                           .loc[:,("claim_id", "provider_id", "provider_name", "colour", "hs1_created_date", "payment_hs2", "pdpa_1", "ix_justification")],
                          df.loc[((df.loc[:,"slide_type"] == "ix_issue") & 
                                 (df.loc[:,"recommendation"] == recommendation)), "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
             num += 1
@@ -617,7 +619,7 @@ if uploaded_file is not None:
                      "- {} \n".format(tuple(df.loc[df.loc[:,"slide_type"] == "delete", "ix_complete"].unique().transpose())) +
                      "- {}".format(tuple(df.loc[df.loc[:,"slide_type"] == "delete", "diagnosis2"].unique().transpose())),
                      df.loc[df.loc[:,"slide_type"] == "delete"].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
-                       .loc[:,("claim_id", "provider_id", "provider_name", "hs1_created_date", "section_done", "pdpa_1", "ix_complete")],
+                       .loc[:,("claim_id", "provider_id", "provider_name", "colour", "hs1_created_date", "section_done", "pdpa_1", "ix_complete")],
                      df.loc[df.loc[:,"slide_type"] == "delete", "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
         
     # For undecisive Claims
@@ -635,7 +637,7 @@ if uploaded_file is not None:
                      "- {} \n".format(tuple(df.loc[df.loc[:,"slide_type"] == "deceased", "ix_complete"].unique().transpose())) +
                      "- {}".format(tuple(df.loc[df.loc[:,"slide_type"] == "deceased", "diagnosis2"].unique().transpose())),
                      df.loc[df.loc[:,"slide_type"] == "deceased"].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
-                       .loc[:,("claim_id", "provider_id", "provider_name", "hs1_created_date", "pdpa_1", "section_done", "ix_complete", "miss_wrong_diag")],
+                       .loc[:,("claim_id", "provider_id", "provider_name", "colour", "hs1_created_date", "pdpa_1", "section_done", "ix_complete", "miss_wrong_diag")],
                      df.loc[df.loc[:,"slide_type"] == "deceased", "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
             
     # For session
@@ -645,11 +647,11 @@ if uploaded_file is not None:
                      "- {} Sections Done \n".format(tuple(df.loc[df.loc[:,"slide_type"] == "session", "section_done"].unique().transpose())) +
                      "- {} \n".format(tuple(df.loc[df.loc[:,"slide_type"] == "session", "ix_complete"].unique().transpose())),
                      df.loc[df.loc[:,"slide_type"] == "session"].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
-                       .loc[:,("claim_id", "provider_id", "provider_name", "hs1_created_date", "pdpa_1", "section_done", "ix_complete")],
+                       .loc[:,("claim_id", "provider_id", "provider_name", "colour", "hs1_created_date", "pdpa_1", "section_done", "ix_complete")],
                      df.loc[df.loc[:,"slide_type"] == "session", "tcmc_recommendation"].reset_index().loc[0,"tcmc_recommendation"])
         
     # For Paid Claims
     elif slide_types == "paid":
         st.write("Paid (n = {})".format(len(df.loc[df.loc[:,"slide_type"] == "paid"])))
         st.table(df.loc[df.loc[:,"slide_type"] == "paid"].sort_values(["provider_id", "hs1_created_date"]).reset_index()\
-                   .loc[:,("claim_id", "provider_id", "provider_name", "hs1_created_date")])
+                   .loc[:,("claim_id", "provider_id", "provider_name", "colour", "hs1_created_date")])
